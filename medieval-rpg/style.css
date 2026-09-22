@@ -1,0 +1,425 @@
+/* === Medieval Fantasy Theme & Modern Glassmorphism Styling === */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=MedievalSharp&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0b0c10;
+    font-family: 'Cinzel', serif;
+    color: #f5f6fa;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+canvas#gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+/* === Top HUD Bars === */
+#player-hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(18, 20, 26, 0.94);
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 2px solid #576574;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+.hud-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hud-label {
+    width: 65px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #dcdde1;
+}
+
+.bar-container {
+    position: relative;
+    width: 220px;
+    height: 16px;
+    background: #2f3640;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #718093;
+}
+
+#hp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+}
+
+#sp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2980b9, #3498db);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+}
+
+.bar-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.hud-info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 6px;
+}
+
+.gold-text {
+    color: #f1c40f;
+    font-weight: bold;
+}
+
+/* === Quick Action Shortcuts HUD (Bottom Center) === */
+#action-hud {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    background: rgba(18, 20, 26, 0.9);
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 2px solid #7f8c8d;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    z-index: 10;
+}
+
+.action-slot {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    background: #2c3e50;
+    border: 2px solid #95a5a6;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.action-slot .key-tag {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #f1c40f;
+}
+
+.action-slot .item-count {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #2ecc71;
+}
+
+.cd-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    height: 0%;
+}
+
+/* === Zone Title Banner (Top Center) === */
+#zone-banner {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 17, 23, 0.8);
+    padding: 8px 24px;
+    border-radius: 6px;
+    border-bottom: 2px solid #f1c40f;
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: #f5f6fa;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+/* === Boss Health Bar (Top Center Screen) === */
+#boss-hud {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 480px;
+    display: none;
+    text-align: center;
+    z-index: 12;
+}
+
+#boss-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-shadow: 0 0 8px rgba(231, 76, 60, 0.8);
+}
+
+.boss-bar-box {
+    width: 100%;
+    height: 20px;
+    background: #1e272e;
+    border: 2px solid #e74c3c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#boss-hp-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #962d22, #e74c3c);
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.9);
+}
+
+/* === Controls & Audio Help HUD (Top Right) === */
+#top-right-hud {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.medieval-btn {
+    background: linear-gradient(180deg, #34495e, #2c3e50);
+    border: 2px solid #bdc3c7;
+    color: #f1c40f;
+    padding: 8px 16px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.medieval-btn:hover {
+    background: linear-gradient(180deg, #4b6584, #34495e);
+    border-color: #f1c40f;
+    box-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+}
+
+/* === Modal Windows (Inventory, Dialogue, Shop, Death) === */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 12, 16, 0.88);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-content {
+    background: #1e272e;
+    border: 3px solid #f1c40f;
+    border-radius: 12px;
+    padding: 24px 32px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9);
+    max-width: 600px;
+    width: 90%;
+    color: #ecf0f1;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #576574;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-header h2 {
+    color: #f1c40f;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+}
+
+/* Inventory Grid */
+.inv-container {
+    display: flex;
+    gap: 20px;
+}
+
+.equip-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #2f3640;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #718093;
+}
+
+.equip-slot {
+    font-size: 13px;
+    padding: 6px;
+    background: #1e272e;
+    border-radius: 4px;
+}
+
+.inv-grid-panel {
+    flex: 1.5;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.inv-slot {
+    width: 58px;
+    height: 58px;
+    background: #2f3640;
+    border: 1px solid #718093;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.inv-slot:hover {
+    transform: scale(1.05);
+    border-color: #f1c40f;
+}
+
+.inv-slot.rare {
+    border-color: #3498db;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.4);
+}
+
+.inv-slot.epic {
+    border-color: #e74c3c;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+}
+
+/* Dialogue Box */
+.dialogue-box {
+    text-align: left;
+}
+
+#speaker-name {
+    color: #f1c40f;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+#dialogue-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #dcdde1;
+    margin-bottom: 20px;
+}
+
+/* Vendor Shop List */
+#vendor-items-list {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.vendor-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2f3640;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #576574;
+}
+
+.vendor-item-row .name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.vendor-item-row .desc {
+    display: block;
+    font-size: 11px;
+    color: #a4b0be;
+}
+
+.vendor-item-row button.buy-btn {
+    background: #e67e22;
+    border: 1px solid #f39c12;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Death Screen */
+#death-screen h1 {
+    font-size: 42px;
+    color: #c0392b;
+    text-shadow: 0 0 15px rgba(192, 57, 43, 0.9);
+    margin-bottom: 14px;
+    letter-spacing: 4px;
+}

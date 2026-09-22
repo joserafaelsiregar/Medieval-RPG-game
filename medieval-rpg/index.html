@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realm of Eldoria - 2D Medieval Action-RPG</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Render Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Player HUD (Top Left) -->
+        <div id="player-hud">
+            <div class="hud-stat-row">
+                <span class="hud-label">HEALTH</span>
+                <div class="bar-container">
+                    <div id="hp-fill" style="width: 100%;"></div>
+                    <span id="hp-text" class="bar-text">300 / 300</span>
+                </div>
+            </div>
+            <div class="hud-stat-row">
+                <span class="hud-label">STAMINA</span>
+                <div class="bar-container">
+                    <div id="sp-fill" style="width: 100%;"></div>
+                    <span id="sp-text" class="bar-text">200 / 200</span>
+                </div>
+            </div>
+            <div class="hud-info-row">
+                <span id="level-val">Lv. 1</span>
+                <span class="gold-text">💰 <span id="gold-val">150</span> Gold</span>
+            </div>
+        </div>
+
+        <!-- Zone Banner (Top Center) -->
+        <div id="zone-banner">
+            <span id="zone-name">Oakhaven Village</span>
+        </div>
+
+        <!-- Boss Health Bar -->
+        <div id="boss-hud">
+            <div id="boss-title">Malakor, The Ruin Warlord</div>
+            <div class="boss-bar-box">
+                <div id="boss-hp-fill"></div>
+            </div>
+        </div>
+
+        <!-- Top Right Controls & Menu -->
+        <div id="top-right-hud">
+            <button id="inventory-btn" class="medieval-btn">🎒 Inventory [I]</button>
+            <button id="audio-toggle-btn" class="medieval-btn">🔊 Sound: On</button>
+        </div>
+
+        <!-- Action Shortcuts HUD (Bottom Center) -->
+        <div id="action-hud">
+            <div class="action-slot" title="Left Click: 3-Hit Combo Slash">
+                <span class="key-tag">LMB</span>
+                ⚔️
+            </div>
+            <div class="action-slot" title="Q: Heavy Cleave / Aerial Slam">
+                <span class="key-tag">Q</span>
+                💥
+            </div>
+            <div class="action-slot" title="Right Click: Shield Block / Parry">
+                <span class="key-tag">RMB</span>
+                🛡️
+            </div>
+            <div class="action-slot" title="Space: Acrobatic Jump (Evade Ground Attacks & Leap)">
+                <span class="key-tag">SPACE</span>
+                🦘
+            </div>
+            <div class="action-slot" title="Shift / V: Rapid Dodge Roll (i-Frames)">
+                <span class="key-tag">SHIFT</span>
+                💨
+            </div>
+            <div class="action-slot" title="E: Light Spell Beam">
+                <span class="key-tag">E</span>
+                ⚡
+                <div id="spell-cd-overlay" class="cd-overlay"></div>
+            </div>
+            <div class="action-slot" title="1: Health Potion (+100 HP)">
+                <span class="key-tag">1</span>
+                🧪
+                <span id="potion-count-hp" class="item-count">6</span>
+            </div>
+            <div class="action-slot" title="2: Stamina Potion (+90 SP)">
+                <span class="key-tag">2</span>
+                💧
+                <span id="potion-count-sp" class="item-count">5</span>
+            </div>
+        </div>
+
+        <!-- Inventory & Equipment Modal -->
+        <div id="inventory-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Equipment & Inventory</h2>
+                    <button id="close-inv-btn" class="medieval-btn">✕</button>
+                </div>
+                <div class="inv-container">
+                    <div class="equip-panel">
+                        <h3>Equipment</h3>
+                        <div class="equip-slot">🗡️ <strong>Weapon:</strong> <span id="slot-weapon">Tempered Royal Broadsword</span></div>
+                        <div class="equip-slot">🛡️ <strong>Shield:</strong> <span id="slot-shield">Reinforced Knight Shield</span></div>
+                        <div class="equip-slot">🥋 <strong>Armor:</strong> <span id="slot-armor">Champion Plate Armor</span></div>
+                        <div class="equip-slot">💍 <strong>Ring:</strong> <span id="slot-ring">Ring of the Valiant</span></div>
+                        <hr style="border-color: #576574; margin: 6px 0;">
+                        <div><strong>Total ATK:</strong> <span id="stat-atk">68</span></div>
+                        <div><strong>Total DEF:</strong> <span id="stat-def">48</span></div>
+                        <div><strong>Max HP:</strong> <span id="stat-hp">300</span></div>
+                    </div>
+                    <div class="inv-grid-panel" id="inventory-grid">
+                        <!-- Slots dynamically rendered -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dialogue & NPC Modal -->
+        <div id="dialogue-modal" class="modal-overlay">
+            <div class="modal-content dialogue-box">
+                <div class="modal-header">
+                    <h2 id="speaker-name">NPC</h2>
+                    <button id="close-dialog-btn" class="medieval-btn">✕</button>
+                </div>
+                <p id="dialogue-text">Dialogue content here...</p>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button id="dialogue-shop-btn" class="medieval-btn" style="display: none;">Trade / Store</button>
+                    <button id="dialogue-upgrade-btn" class="medieval-btn" style="display: none;">Forge Upgrade Weapon</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendor Shop Modal -->
+        <div id="vendor-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Blacksmith Armory</h2>
+                    <button id="close-vendor-btn" class="medieval-btn">✕</button>
+                </div>
+                <div id="vendor-items-list">
+                    <!-- Shop items rendered dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over / Death Screen -->
+        <div id="death-screen" class="modal-overlay">
+            <div class="modal-content" style="text-align: center;">
+                <h1>YOU DIED</h1>
+                <p style="margin-bottom: 20px; color: #a4b0be;">Your spirit has returned to the flame of Oakhaven.</p>
+                <button id="respawn-btn" class="medieval-btn" style="font-size: 16px; padding: 10px 24px;">Respawn at Campfire</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts in dependency order -->
+    <script src="js/engine/Audio.js"></script>
+    <script src="js/engine/Camera.js"></script>
+    <script src="js/engine/Input.js"></script>
+    <script src="js/engine/ParticleSystem.js"></script>
+    <script src="js/engine/Renderer.js"></script>
+    <script src="js/entities/Entity.js"></script>
+    <script src="js/entities/Player.js"></script>
+    <script src="js/entities/Enemy.js"></script>
+    <script src="js/entities/Boss.js"></script>
+    <script src="js/entities/Props.js"></script>
+    <script src="js/systems/CombatManager.js"></script>
+    <script src="js/systems/Inventory.js"></script>
+    <script src="js/systems/Vendor.js"></script>
+    <script src="js/world/WorldMap.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
